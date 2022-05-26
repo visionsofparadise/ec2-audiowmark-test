@@ -36,7 +36,7 @@ export class Ec2AudiowmarkTestStack extends Stack {
       },
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T2,
-        ec2.InstanceSize.NANO
+        ec2.InstanceSize.SMALL
       ),
       machineImage: ec2.MachineImage.latestAmazonLinux(),
       allowAllOutbound: true,
