@@ -11,18 +11,6 @@ const cloudwatchLogs = new AWS.CloudWatchLogs({
   region: "us-east-1",
 });
 
-const api = express();
-
-api.use(cors());
-api.use(bodyParser.urlencoded({ extended: true }));
-api.use(bodyParser.json());
-
-api.get("/", async (_, res) => res.sendStatus(200));
-
-const port = 4000;
-
-api.listen(port, async () => console.log(`Server listening on port ${port}`));
-
 const main = async () => {
   const logGroupName = process.env.LOG_GROUP_NAME! || "test";
   const logStreamName = `leaklock/ec2-audiowmark-test/${new Date().getTime()}`;
@@ -47,6 +35,18 @@ const main = async () => {
         ],
       })
       .promise();
+
+  await log("main started");
+
+  const api = express();
+
+  api.use(cors());
+  api.use(bodyParser.urlencoded({ extended: true }));
+  api.use(bodyParser.json());
+
+  api.get("/", async (_, res) => res.sendStatus(200));
+
+  api.listen(4000, async () => log("api started"));
 
   try {
     const {
