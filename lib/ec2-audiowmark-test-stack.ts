@@ -38,7 +38,9 @@ export class Ec2AudiowmarkTestStack extends Stack {
         ec2.InstanceClass.T2,
         ec2.InstanceSize.SMALL
       ),
-      machineImage: ec2.MachineImage.latestAmazonLinux(),
+      machineImage: ec2.MachineImage.genericLinux({
+        "us-east-1": "ami-09e67e426f25ce0d7",
+      }),
       allowAllOutbound: true,
       blockDevices: [
         {
@@ -49,14 +51,14 @@ export class Ec2AudiowmarkTestStack extends Stack {
       userData: ec2.UserData.forLinux({
         shebang: `#!/bin/bash
 
-sudo yum update -y
-sudo yum install nodejs npm -y
-sudo amazon-linux-extras install docker -y
+sudo apt-get update -y
+sudo apt install nodejs npm -y
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 sudo service docker start
 
 git clone https://github.com/swesterfeld/audiowmark.git
 cd audiowmark
-docker build -t audiowmark .
+sudo docker build -t audiowmark .
 cd ..
 
 git clone https://github.com/visionsofparadise/ec2-audiowmark-test.git
