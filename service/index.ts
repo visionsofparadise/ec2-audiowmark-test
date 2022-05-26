@@ -22,8 +22,10 @@ const main = async () => {
     })
     .promise();
 
-  const log = async (message: string) =>
-    cloudwatchLogs
+  const log = async (message: string) => {
+    console.log(message);
+
+    return cloudwatchLogs
       .putLogEvents({
         logGroupName,
         logStreamName,
@@ -35,6 +37,7 @@ const main = async () => {
         ],
       })
       .promise();
+  };
 
   await log("main started");
 

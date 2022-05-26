@@ -39,7 +39,7 @@ export class Ec2AudiowmarkTestStack extends Stack {
         ec2.InstanceSize.SMALL
       ),
       machineImage: ec2.MachineImage.genericLinux({
-        "us-east-1": "ami-09e67e426f25ce0d7",
+        "us-east-1": "ami-09d56f8956ab235b3",
       }),
       allowAllOutbound: true,
       blockDevices: [
