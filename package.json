@@ -1,0 +1,36 @@
+{
+	"name": "ec2-audiowmark-test",
+	"version": "0.1.0",
+	"bin": {
+		"ec2-audiowmark-test": "bin/ec2-audiowmark-test.js"
+	},
+	"scripts": {
+		"start": "node ./service/index.js",
+		"build": "tsc",
+		"watch": "tsc -w",
+		"test": "jest",
+		"cdk": "cdk"
+	},
+	"devDependencies": {
+		"@types/body-parser": "^1.19.2",
+		"@types/cors": "^2.8.12",
+		"@types/express": "^4.17.13",
+		"@types/jest": "^27.5.0",
+		"@types/node": "10.17.27",
+		"@types/prettier": "2.6.0",
+		"aws-cdk": "2.25.0",
+		"jest": "^27.5.1",
+		"ts-jest": "^27.1.4",
+		"ts-node": "^10.7.0",
+		"typescript": "~3.9.7"
+	},
+	"dependencies": {
+		"aws-cdk-lib": "2.25.0",
+		"aws-sdk": "^2.1143.0",
+		"body-parser": "^1.20.0",
+		"constructs": "^10.0.0",
+		"cors": "^2.8.5",
+		"express": "^4.18.1",
+		"source-map-support": "^0.5.21"
+	}
+}
