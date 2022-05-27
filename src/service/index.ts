@@ -28,7 +28,7 @@ const main = async () => {
 
 	logs.push({ message: `path cwd ${process.cwd()}`, timestamp: new Date().getTime() })
 
-	const dataPath = path.resolve(process.cwd(), 'dist/data')
+	const dataPath = path.resolve('../ec2-audiowmark-test/dist/data')
 
 	logs.push({ message: `data ${dataPath}`, timestamp: new Date().getTime() })
 
@@ -43,16 +43,12 @@ const main = async () => {
 		logs.push({ message: `stdout ${JSON.stringify(stdout, null, 4)}`, timestamp: new Date().getTime() })
 		logs.push({ message: `stderr ${JSON.stringify(stderr, null, 4)}`, timestamp: new Date().getTime() })
 		
-		if (Object.keys(stderr).keys.length === 0) {
-			fs.access('../data/test-out.wav', fs.constants.R_OK, (error: any) => {
-				if (error) throw error
+		fs.access('../data/test-out.wav', fs.constants.R_OK, (error: any) => {
+			if (error) throw error
 
-				logs.push({ message: 'success', timestamp: new Date().getTime() })
-			});
-
-		} else {
-			throw stderr
-		}
+			logs.push({ message: 'success', timestamp: new Date().getTime() })
+		});
+		
   } catch (error) {
     logs.push({ message: JSON.stringify(error, null, 4), timestamp: new Date().getTime() })
 	}
