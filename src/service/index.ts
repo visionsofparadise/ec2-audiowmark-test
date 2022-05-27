@@ -2,9 +2,6 @@ import * as AWS from "aws-sdk";
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 const path = require("path");
-const express = require('express')
-import cors from "cors";
-import * as bodyParser from "body-parser";
 
 const cloudwatchLogs = new AWS.CloudWatchLogs({
   apiVersion: "2014-03-28",
@@ -20,53 +17,36 @@ const main = async () => {
       logGroupName,
       logStreamName,
     })
-    .promise();
+		.promise();
+		
+	const logs = []
 
-  const log = async (message: string) => {
-    console.log(message);
-
-    return cloudwatchLogs
-      .putLogEvents({
-        logGroupName,
-        logStreamName,
-        logEvents: [
-          {
-            timestamp: new Date().getTime(),
-            message,
-          },
-        ],
-      })
-      .promise();
-  };
-
-  await log("main started");
-
-  const api = express();
-
-  api.use(cors());
-  api.use(bodyParser.urlencoded({ extended: true }));
-  api.use(bodyParser.json());
-
-  api.get("/", async (_: any, res: any) => res.sendStatus(200));
-
-  api.listen(4000, async () => log("api started"));
+	logs.push({ message: 'main started', timestamp: new Date().getTime() })
 
   try {
     const {
       stderr,
     } = await exec(
-      "docker run -v ~/ec2-audiowmark-test/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677",
-      { cwd: "~/../audiowmark" }
+      "docker run -v ~/ec2-audiowmark-test/src/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677",
+      { cwd: path.resolve(process.cwd(), '../audiowmark') }
     );
 
     if (path.existsSync("data/test-out.wav")) {
-      await log("success");
+			logs.push({ message: 'success', timestamp: new Date().getTime() })
     } else {
       throw stderr;
     }
   } catch (error) {
-    await log(error);
-  }
+    logs.push({ message: error, timestamp: new Date().getTime() })
+	}
+	
+	await cloudwatchLogs
+		.putLogEvents({
+			logGroupName,
+			logStreamName,
+			logEvents: logs,
+		})
+		.promise();
 
   return;
 };
