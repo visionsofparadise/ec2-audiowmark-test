@@ -26,6 +26,12 @@ const main = async () => {
 	logs.push({ message: JSON.stringify(process.env, null, 4), timestamp: new Date().getTime() })
 
   try {
+		const outputHome = await exec(
+      `echo $HOME`
+		);
+
+		logs.push({ message: `outputHome ${JSON.stringify(outputHome, null, 4)}`, timestamp: new Date().getTime() })
+
     const output = await exec(
       `docker run -v $HOME/ec2-audiowmarktest/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`
 		);
