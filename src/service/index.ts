@@ -23,17 +23,29 @@ const main = async () => {
 
 	logs.push({ message: 'main started', timestamp: new Date().getTime() })
 
-	logs.push({ message: `cwd ${process.cwd()}`, timestamp: new Date().getTime() })
+	logs.push({ message: `dirname ${__dirname}`, timestamp: new Date().getTime() })
+
+	const dataPath = path.resolve(__dirname, 'dist/data')
+
+	logs.push({ message: `data ${dataPath}`, timestamp: new Date().getTime() })
+
+	const cwdPath = path.resolve(__dirname, '../audiowmark')
+
+	logs.push({ message: `cwd ${cwdPath}`, timestamp: new Date().getTime() })
+
+	const outPath = path.resolve(dataPath, "test-out.wav")
+
+	logs.push({ message: `out ${cwdPath}`, timestamp: new Date().getTime() })
 
   try {
     const {
       stderr,
     } = await exec(
-      `docker run -v ${path.resolve(process.cwd(), 'dist/data')}:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`,
-      { cwd: path.resolve(process.cwd(), '../audiowmark') }
+      `docker run -v ${dataPath}:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`,
+      { cwd: cwdPath }
     );
 
-    if (path.existsSync("data/test-out.wav")) {
+    if (path.existsSync(outPath)) {
 			logs.push({ message: 'success', timestamp: new Date().getTime() })
     } else {
       throw stderr;
