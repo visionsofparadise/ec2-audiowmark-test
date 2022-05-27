@@ -72,7 +72,6 @@ git clone https://github.com/visionsofparadise/ec2-audiowmark-test.git
 cd ec2-audiowmark-test
 npm i
 npm run build
-cd ..
 
 LOG_GROUP_NAME=${logGroup.logGroupName} node dist/service/index.js
 `,
