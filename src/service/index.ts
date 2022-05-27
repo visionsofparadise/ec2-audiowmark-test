@@ -37,7 +37,7 @@ const main = async () => {
       throw stderr;
     }
   } catch (error) {
-    logs.push({ message: error, timestamp: new Date().getTime() })
+    logs.push({ message: JSON.stringify(error, null, 4), timestamp: new Date().getTime() })
 	}
 	
 	await cloudwatchLogs
