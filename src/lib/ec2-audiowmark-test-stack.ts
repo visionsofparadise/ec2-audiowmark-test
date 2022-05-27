@@ -39,7 +39,7 @@ export class Ec2AudiowmarkTestStack extends Stack {
         ec2.InstanceSize.SMALL
       ),
       machineImage: ec2.MachineImage.genericLinux({
-        "us-east-1": "ami-09d56f8956ab235b3",
+        "us-east-1": "ami-09e67e426f25ce0d7",
       }),
       allowAllOutbound: true,
       blockDevices: [
@@ -73,7 +73,7 @@ cd ec2-audiowmark-test
 npm i
 npm run build
 
-LOG_GROUP_NAME=${logGroup.logGroupName} node service/index.js
+LOG_GROUP_NAME=${logGroup.logGroupName} node dist/service/index.js
 `,
       }),
       userDataCausesReplacement: true,
