@@ -27,7 +27,45 @@ const main = async () => {
 
   try {
     const output = await exec(
-      `docker run -v ~/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`
+      `docker run -v $HOME/ec2-audiowmarktest/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`
+		);
+
+		logs.push({ message: `output ${JSON.stringify(output, null, 4)}`, timestamp: new Date().getTime() })
+		
+		fs.access('data/test-out.wav', fs.constants.R_OK, (error: any) => {
+			if (error) throw error
+
+			logs.push({ message: 'success', timestamp: new Date().getTime() })
+
+			return
+		});
+
+  } catch (error) {
+    logs.push({ message: JSON.stringify(error, null, 4), timestamp: new Date().getTime() })
+	}
+
+	try {
+    const output = await exec(
+      `docker run -v "$HOME/ec2-audiowmarktest/data":/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`
+		);
+
+		logs.push({ message: `output ${JSON.stringify(output, null, 4)}`, timestamp: new Date().getTime() })
+		
+		fs.access('data/test-out.wav', fs.constants.R_OK, (error: any) => {
+			if (error) throw error
+
+			logs.push({ message: 'success', timestamp: new Date().getTime() })
+
+			return
+		});
+
+  } catch (error) {
+    logs.push({ message: JSON.stringify(error, null, 4), timestamp: new Date().getTime() })
+	}
+
+	try {
+    const output = await exec(
+      `docker run -v /home/ubuntu/ec2-audiowmarktest/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`
 		);
 
 		logs.push({ message: `output ${JSON.stringify(output, null, 4)}`, timestamp: new Date().getTime() })
