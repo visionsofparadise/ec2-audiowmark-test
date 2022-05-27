@@ -23,11 +23,13 @@ const main = async () => {
 
 	logs.push({ message: 'main started', timestamp: new Date().getTime() })
 
+	logs.push({ message: `cwd ${process.cwd()}`, timestamp: new Date().getTime() })
+
   try {
     const {
       stderr,
     } = await exec(
-      "docker run -v ~/ec2-audiowmark-test/src/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677",
+      `docker run -v ${path.resolve(process.cwd(), 'src/data')}:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`,
       { cwd: path.resolve(process.cwd(), '../audiowmark') }
     );
 
