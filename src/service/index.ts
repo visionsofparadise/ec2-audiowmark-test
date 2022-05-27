@@ -10,7 +10,7 @@ const cloudwatchLogs = new AWS.CloudWatchLogs({
 });
 
 const main = async () => {
-  const logGroupName = process.env.LOG_GROUP_NAME! || "test";
+  const logGroupName = process.env.LOG_GROUP_NAME!;
   const logStreamName = `leaklock/ec2-audiowmark-test/${new Date().getTime()}`;
 
   await cloudwatchLogs
@@ -26,24 +26,20 @@ const main = async () => {
 
 	logs.push({ message: JSON.stringify(process.env, null, 4), timestamp: new Date().getTime() })
 
-	logs.push({ message: `path cwd ${process.cwd()}`, timestamp: new Date().getTime() })
-
-	const dataPath = path.resolve('../ec2-audiowmark-test/data')
-
-	logs.push({ message: `data ${dataPath}`, timestamp: new Date().getTime() })
-
   try {
     const output = await exec(
-      `docker run -v ${dataPath}:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`,
+      `docker run -v ../ec2-audiowmark-test/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`,
       { cwd: '../audiowmark' }
 		);
 
 		logs.push({ message: `output ${JSON.stringify(output, null, 4)}`, timestamp: new Date().getTime() })
 		
-		fs.access(path.resolve('data/test-out.wav'), fs.constants.R_OK, (error: any) => {
+		fs.access('../data/test-out.wav', fs.constants.R_OK, (error: any) => {
 			if (error) throw error
 
 			logs.push({ message: 'success', timestamp: new Date().getTime() })
+
+			return
 		});
 
   } catch (error) {
