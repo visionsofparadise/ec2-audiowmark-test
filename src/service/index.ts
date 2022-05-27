@@ -26,11 +26,17 @@ const main = async () => {
 	logs.push({ message: JSON.stringify(process.env, null, 4), timestamp: new Date().getTime() })
 
   try {
-    const output = await exec(
+		const output1 = await exec(
+      `ls`
+		);
+
+		logs.push({ message: `output1 ${JSON.stringify(output1, null, 4)}`, timestamp: new Date().getTime() })
+
+    const output2 = await exec(
       `docker run -v data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`
 		);
 
-		logs.push({ message: `output ${JSON.stringify(output, null, 4)}`, timestamp: new Date().getTime() })
+		logs.push({ message: `output2 ${JSON.stringify(output2, null, 4)}`, timestamp: new Date().getTime() })
 		
 		fs.access('../data/test-out.wav', fs.constants.R_OK, (error: any) => {
 			if (error) throw error

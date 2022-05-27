@@ -79,7 +79,6 @@ LOG_GROUP_NAME=${logGroup.logGroupName} node dist/service/index.js
       userDataCausesReplacement: true,
     });
 
-    instance.connections.allowFromAnyIpv4(ec2.Port.tcp(4000));
     logGroup.grantWrite(instance.grantPrincipal);
   }
 }
