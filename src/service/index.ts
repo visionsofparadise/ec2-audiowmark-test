@@ -56,7 +56,7 @@ const main = async () => {
       stderr,
     } = await exec(
       "docker run -v ~/ec2-audiowmark-test/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677",
-      { cwd: "~/audiowmark" }
+      { cwd: "~/../audiowmark" }
     );
 
     if (path.existsSync("data/test-out.wav")) {
