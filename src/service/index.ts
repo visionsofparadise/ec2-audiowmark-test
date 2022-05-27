@@ -28,7 +28,7 @@ const main = async () => {
 
 	logs.push({ message: `path cwd ${process.cwd()}`, timestamp: new Date().getTime() })
 
-	const dataPath = path.resolve('../ec2-audiowmark-test/dist/data')
+	const dataPath = path.resolve('../ec2-audiowmark-test/data')
 
 	logs.push({ message: `data ${dataPath}`, timestamp: new Date().getTime() })
 
@@ -40,7 +40,7 @@ const main = async () => {
 
 		logs.push({ message: `output ${JSON.stringify(output, null, 4)}`, timestamp: new Date().getTime() })
 		
-		fs.access('../data/test-out.wav', fs.constants.R_OK, (error: any) => {
+		fs.access(path.resolve('data/test-out.wav'), fs.constants.R_OK, (error: any) => {
 			if (error) throw error
 
 			logs.push({ message: 'success', timestamp: new Date().getTime() })
