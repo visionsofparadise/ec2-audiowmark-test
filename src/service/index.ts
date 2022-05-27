@@ -33,22 +33,19 @@ const main = async () => {
 	logs.push({ message: `data ${dataPath}`, timestamp: new Date().getTime() })
 
   try {
-    const {
-      stdout, stderr,
-    } = await exec(
+    const output = await exec(
       `docker run -v ${dataPath}:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`,
       { cwd: '../audiowmark' }
 		);
 
-		logs.push({ message: `stdout ${JSON.stringify(stdout, null, 4)}`, timestamp: new Date().getTime() })
-		logs.push({ message: `stderr ${JSON.stringify(stderr, null, 4)}`, timestamp: new Date().getTime() })
+		logs.push({ message: `output ${JSON.stringify(output, null, 4)}`, timestamp: new Date().getTime() })
 		
 		fs.access('../data/test-out.wav', fs.constants.R_OK, (error: any) => {
 			if (error) throw error
 
 			logs.push({ message: 'success', timestamp: new Date().getTime() })
 		});
-		
+
   } catch (error) {
     logs.push({ message: JSON.stringify(error, null, 4), timestamp: new Date().getTime() })
 	}
