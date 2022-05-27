@@ -51,10 +51,17 @@ export class Ec2AudiowmarkTestStack extends Stack {
       userData: ec2.UserData.forLinux({
         shebang: `#!/bin/bash
 
-sudo apt-get update -y
+sudo apt-get update
 sudo apt install nodejs npm -y
+sudo apt-get install ca-certificates curl gnupg lsb-release -y
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
-sudo service docker start
+sudo usermod -aG docker ubuntu
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
 
 git clone https://github.com/swesterfeld/audiowmark.git
 cd audiowmark
@@ -64,7 +71,7 @@ cd ..
 git clone https://github.com/visionsofparadise/ec2-audiowmark-test.git
 cd ec2-audiowmark-test
 npm i
-npm run compile
+npm run build
 
 LOG_GROUP_NAME=${logGroup.logGroupName} node service/index.js
 `,
