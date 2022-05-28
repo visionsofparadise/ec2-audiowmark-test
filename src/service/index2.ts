@@ -19,6 +19,14 @@ const main = async () => {
 		fs.access('data/test-out.wav', fs.constants.R_OK, (error: any) => {
 			if (error) throw error
 
+			console.log('test-out.wav is readable')
+
+			return
+		});
+
+		fs.access('data/falsepos.wav', fs.constants.R_OK, (error: any) => {
+			if (error) throw error
+
 			return
 		});
 
