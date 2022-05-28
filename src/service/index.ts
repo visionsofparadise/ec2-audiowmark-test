@@ -32,7 +32,7 @@ const main = async () => {
 			return
 		});
 
-    const output = await exec('docker run -v /home/ubuntu/ec2-audiowmark-test/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677');
+    const output = await exec(`docker run --mount 'type=bind,src=/home/ubuntu/ec2-audiowmark-test/data,dst=/data' --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`);
 
 		logs.push({ message: `output ${JSON.stringify(output, null, 4)}`, timestamp: new Date().getTime() })
 		
