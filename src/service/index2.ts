@@ -3,6 +3,8 @@ const exec = util.promisify(require("child_process").exec);
 const fs = require("fs");
 
 const main = async () => {
+	console.time('Duration')
+
 	try {
 		fs.access('data/test.wav', fs.constants.R_OK, (error: any) => {
 			if (error) throw error
@@ -33,6 +35,8 @@ const main = async () => {
   } catch (error) {
     console.log(JSON.stringify(error, null, 4))
 	}
+
+	console.timeEnd('Duration')
 
   return;
 };
