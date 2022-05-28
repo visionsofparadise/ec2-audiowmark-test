@@ -51,6 +51,7 @@ export class Ec2AudiowmarkTestStack extends Stack {
       userData: ec2.UserData.forLinux({
         shebang: `#!/bin/bash
 
+sudo su ubuntu
 sudo apt-get update
 sudo apt install nodejs npm -y
 sudo apt-get install ca-certificates curl gnupg lsb-release -y
