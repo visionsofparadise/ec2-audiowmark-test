@@ -28,6 +28,32 @@ export class Ec2AudiowmarkTestStack extends Stack {
       retention: cwLogs.RetentionDays.ONE_WEEK,
     });
 
+    const userData = ec2.UserData.forLinux();
+
+    userData.addCommands(
+      "sudo su ubuntu",
+      "sudo apt-get update",
+      "sudo apt install nodejs npm -y",
+      "sudo apt-get install ca-certificates curl gnupg lsb-release -y",
+      "sudo mkdir -p /etc/apt/keyrings",
+      "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg",
+      'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null',
+      "sudo apt-get update",
+      "sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y",
+      "sudo usermod -aG docker ubuntu",
+      "sudo systemctl enable docker.service",
+      "sudo systemctl enable containerd.service",
+      "git clone https://github.com/swesterfeld/audiowmark.git",
+      "cd audiowmark",
+      "sudo docker build -t audiowmark .",
+      "cd ..",
+      "git clone https://github.com/visionsofparadise/ec2-audiowmark-test.git",
+      "cd ec2-audiowmark-test",
+      "npm i",
+      "npm run build",
+      "LOG_GROUP_NAME=${logGroup.logGroupName} node dist/service/index.js"
+    );
+
     const instance = new ec2.Instance(this, `EC2Instance`, {
       instanceName: "audiowmark-test",
       vpc,
@@ -48,35 +74,7 @@ export class Ec2AudiowmarkTestStack extends Stack {
           volume: ec2.BlockDeviceVolume.ebs(10),
         },
       ],
-      userData: ec2.UserData.forLinux({
-        shebang: `#!/bin/bash
-
-sudo su ubuntu
-sudo apt-get update
-sudo apt install nodejs npm -y
-sudo apt-get install ca-certificates curl gnupg lsb-release -y
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
-sudo usermod -aG docker ubuntu
-sudo systemctl enable docker.service
-sudo systemctl enable containerd.service
-
-git clone https://github.com/swesterfeld/audiowmark.git
-cd audiowmark
-sudo docker build -t audiowmark .
-cd ..
-
-git clone https://github.com/visionsofparadise/ec2-audiowmark-test.git
-cd ec2-audiowmark-test
-npm i
-npm run build
-
-LOG_GROUP_NAME=${logGroup.logGroupName} node dist/service/index.js
-`,
-      }),
+      userData,
       userDataCausesReplacement: true,
     });
 
