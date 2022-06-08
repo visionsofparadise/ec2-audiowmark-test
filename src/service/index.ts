@@ -1,7 +1,6 @@
 import * as AWS from "aws-sdk";
-const util = require("util");
-const exec = util.promisify(require("child_process").exec);
 const fs = require("fs");
+const { spawn } = require("child_process");
 
 const cloudwatchLogs = new AWS.CloudWatchLogs({
   apiVersion: "2014-03-28",
@@ -17,36 +16,60 @@ const main = async () => {
       logGroupName,
       logStreamName,
     })
-		.promise();
-		
-	const logs = []
+    .promise();
 
-	logs.push({ message: 'main started', timestamp: new Date().getTime() })
+  const logs = [];
 
-	try {
-    const output = await exec(`docker run -v "$(pwd)"/data:/data --rm -i audiowmark add test.wav test-out.wav 0123456789abcdef0011223344556677`);
+  logs.push({ message: "main started", timestamp: new Date().getTime() });
 
-		logs.push({ message: `output ${JSON.stringify(output, null, 4)}`, timestamp: new Date().getTime() })
-		
-		fs.access('data/test-out.wav', fs.constants.R_OK, (error: any) => {
-			if (error) throw error
+  try {
+    const process = spawn("docker", [
+      "run",
+      "-v",
+      '"$(pwd)"/data:/data',
+      "--rm",
+      "-i",
+      "audiowmark",
+      "add",
+      "-",
+      "-",
+      "0123456789abcdef0011223344556677",
+    ]);
 
-			logs.push({ message: 'success', timestamp: new Date().getTime() })
+    const readStream = fs.createReadStream("data/test.wav");
+    const writeStream = fs.createWriteStream("data/test-output.wav");
 
-			return
-		});
+    readStream.pipe(process.stdin).pipe(writeStream);
 
+    process.on("error", (error: any) => {
+      throw error;
+    });
+
+    process.on("close", (code: any) => {
+      logs.push({ message: `code ${code}`, timestamp: new Date().getTime() });
+
+      fs.access("data/test-out.wav", fs.constants.R_OK, (error: any) => {
+        if (error) throw error;
+
+        logs.push({ message: "success", timestamp: new Date().getTime() });
+
+        return;
+      });
+    });
   } catch (error) {
-    logs.push({ message: JSON.stringify(error, null, 4), timestamp: new Date().getTime() })
-	}
-	
-	await cloudwatchLogs
-		.putLogEvents({
-			logGroupName,
-			logStreamName,
-			logEvents: logs,
-		})
-		.promise();
+    logs.push({
+      message: JSON.stringify(error, null, 4),
+      timestamp: new Date().getTime(),
+    });
+  }
+
+  await cloudwatchLogs
+    .putLogEvents({
+      logGroupName,
+      logStreamName,
+      logEvents: logs,
+    })
+    .promise();
 
   return;
 };
