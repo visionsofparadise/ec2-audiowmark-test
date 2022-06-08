@@ -39,7 +39,8 @@ const main = async () => {
     const readStream = fs.createReadStream("data/test.wav");
     const writeStream = fs.createWriteStream("data/test-output.wav");
 
-    readStream.pipe(process.stdin).pipe(writeStream);
+    readStream.pipe(process.stdin);
+    process.stdout.pipe(writeStream);
 
     process.on("error", (error: any) => {
       throw error;
